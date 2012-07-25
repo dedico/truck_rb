@@ -1,4 +1,4 @@
-truck_api_client
+truck_rb
 ================
 
 truck.pl API client in Ruby
