@@ -4,31 +4,32 @@ require 'net/http'
 require "uri"
 
 class Response
-  attr_accessor :xml, :errors, :code, :success, :klass
+  attr_accessor :xml, :errors, :code, :success, :error, :warnings, :klass
   
-  def initialize(response, klass)
-    #puts '%%%%% RESPONSE %%%%%'
-    #puts response.body
-    #puts response.class
-    #puts '%%%%%%%%%%%%%%%%%%%%'
+  def initialize(response)
     @code = response.code
     @xml = Nokogiri::XML(response.body)
     errors = @xml.xpath("//Errors")
     @success = @xml.xpath("//Status").first.content.downcase == "success"
+    @error = @xml.xpath("//Status").first.content.downcase == "error"
+    
     @errors = []
-    unless @success
+    if @error
       @errors = errors.map { |e| e.content }
     end
-    @klass = klass
+    @warnings = []
+    if @xml.xpath("//Warnings").size > 0
+      @warnings = @xml.xpath("//Warnings").map { |e| e.content }
+    end
   end
 
-  def parse(single = true)
+  def parse(klass, single = true)
     if single
-      xml = @xml.xpath(@klass.xpath).to_s
-      @klass.parse(xml, :single => true)
+      xml = @xml.xpath(klass.xpath).to_s
+      klass.parse(xml, :single => true)
     else
-      xml = @xml.xpath(@klass.xpath_pluralize).to_s
-      @klass.parse(xml)
+      xml = @xml.xpath(klass.xpath_pluralize).to_s
+      klass.parse(xml)
     end
   end
 end

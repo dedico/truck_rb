@@ -4,28 +4,23 @@ require 'net/http'
 require "uri"
 
 class Request
-  attr_accessor :response
+  attr_accessor :response, :host, :port, :path, :body, :headers
 
 	def initialize(host, port, user, password, query)
     http = Net::HTTP.new(host, port)
     version = "1.0"
     request_xml = "<Request><UserId>#{user}</UserId><Password>#{password}</Password><Version>#{version}</Version>#{query.query}</Request>"
-    headers = {
+    @headers = {
       'Content-Type' => 'text/xml'
     }
 
     post = Net::HTTP::Post.new(query.method)
     post.body = request_xml
 
-    # puts '%%%%% REQUEST %%%%%'
-    # puts http.address
-    # puts http.port
-    # puts post.path
-    # puts post.body
-    # puts '%%%%%%%%%%%%%%%%%%%%'
-
-    api_response = http.post(post.path, post.body, headers)
-    #@response = Response.new(api_response)
-    @response = http.post(post.path, post.body, headers)
+    @host = http.address
+    @port = http.port
+    @path = post.path
+    @body = post.body
+    @response = http.post(@path, @body, @headers)
   end
 end

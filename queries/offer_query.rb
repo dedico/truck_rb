@@ -1,4 +1,4 @@
-class AdQuery
+class OfferQuery
   attr_accessor :query, :method
   
   def initialize(id)
