@@ -3,12 +3,11 @@ require 'nokogiri'
 require 'net/http'
 require "uri"
 require "happymapper"
-require File.dirname(__FILE__) + '/api/request.rb'
-require File.dirname(__FILE__) + '/api/response.rb'
-require File.dirname(__FILE__) + '/models/customer.rb'
-require File.dirname(__FILE__) + '/models/offer.rb'
-require File.dirname(__FILE__) + '/queries/customer_query.rb'
-require File.dirname(__FILE__) + '/queries/offer_query.rb'
+
+
+Dir[File.dirname(__FILE__) + '/api/*.rb'].each {|file| require file }
+Dir[File.dirname(__FILE__) + '/models/*.rb'].each {|file| require file }
+Dir[File.dirname(__FILE__) + '/queries/*.rb'].each {|file| require file }
 
 host = "nh.test.truck.pl"
 port = 80
